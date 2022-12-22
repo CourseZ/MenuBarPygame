@@ -3,19 +3,7 @@ from button import Button
 from random import randint
 import random
 
-# pygame.draw.rect(SCREEN,color,[x,y,width=,height],w,border-radius)
-
-pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=512)
 pygame.init()
-
-# global variables
-# global LEVEL
-LEVEL = 1
-WIDTH,HEIGHT = 500,700
-
-TUBE_WIDTH = 50
-TUBE_GAP = 150
-# TUBE_GAP = 150
 
 # load font
 GAME_FONT = pygame.font.Font('font/04B_19.TTF',50)
@@ -54,8 +42,6 @@ BIRD_MID_RED = pygame.transform.scale(BIRD_MID_RED,(BIRD_WIDTH,BIRD_HEIGHT))
 BIRD_UP_RED = pygame.image.load('img/redbird-upflap.png')
 BIRD_UP_RED = pygame.transform.scale(BIRD_UP_RED,(BIRD_WIDTH,BIRD_HEIGHT))
 
-BIRD_LIST = [BIRD_MID_YELLOW,BIRD_MID_BLUE,BIRD_MID_RED]
-
 FLAP_SOUND = pygame.mixer.Sound('sounds/sfx_wing.wav')
 HIT_SOUND = pygame.mixer.Sound('sounds/sfx_hit.wav')
 SCORE_SOUND = pygame.mixer.Sound('sounds/sfx_point.wav')
@@ -85,80 +71,20 @@ TUTOR_IMG = pygame.transform.scale(TUTOR_IMG,(50,50))
 
 PYGAME_ICON = pygame.image.load('flappy.ico')
 
-BG_IMG = pygame.image.load('img/menu_game_bg.png')
-BG_IMG = pygame.transform.scale(BG_IMG,(500,700))
 
-MENU_BTN_BG = pygame.image.load('img/menu_btn_bg.png')
-MENU_BTN_BG = pygame.transform.scale(MENU_BTN_BG,(300,120))
 
+LEVEL = 1
+WIDTH,HEIGHT = 500,700
 # main
 SCREEN = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Bird Game")
 pygame.display.set_icon(PYGAME_ICON)
+CLOCK = pygame.time.Clock()
 
 birdflap = pygame.USEREVENT
 pygame.time.set_timer(birdflap,200)
 
-CLOCK = pygame.time.Clock()
 running = True
-
-def Next_level(level):
-    LEVEL = level
-    NEXT_LEVEL_MOUSE_POS = pygame.mouse.get_pos()
-    SCREEN.fill('black')
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-    CLOCK.tick(60)
-    pygame.display.update()
-
-def bird_animation(x,y,bird_list,index):
-    bird = bird_list[index]
-    bird_rect = bird.get_rect(center=(x,y))
-    SCREEN.blit(bird,bird_rect)
-    if bird_rect.centery == y:
-        y -= 4
-    else:
-        y += 4
-
-def tutor():
-    while True:
-        TUTOR_MOUSE_POS = pygame.mouse.get_pos()
-        CLOCK.tick(60)
-        SCREEN.fill('#919191')
-
-        tutor1 = get_font(20).render('Click PLAY Button To Start!',True,'#3C2A21')
-        SCREEN.blit(tutor1,(50,100))
-        tutor2 = get_font(20).render('Press SpaceBar To Start!',True,'#3C2A21')
-        SCREEN.blit(tutor2,(50,150))
-        tutor3 = get_font(20).render('Click OPTIONS Button To Choose your favorite bird!',True,'#3C2A21')
-        SCREEN.blit(tutor3,(50,200))
-        tutor4 = get_font(20).render('Click QUIT to exit game!',True,'#3C2A21')
-        SCREEN.blit(tutor4,(50,250))
-        tutor5 = get_font(20).render('Press P key to pause game!',True,'#3C2A21')
-        SCREEN.blit(tutor5,(50,300))
-        tutor6 = get_font(20).render('Press C key to continue game!',True,'#3C2A21')
-        SCREEN.blit(tutor6,(50,350))
-
-        TUTOR_BACK = Button(image=None,pos=(250,600),text_input='BACK',font=get_font(45),base_color='white',hovering_color='red')
-        TUTOR_BACK.changeColor(TUTOR_MOUSE_POS)
-        TUTOR_BACK.update(SCREEN)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if TUTOR_BACK.checkForInput(TUTOR_MOUSE_POS):
-                    main_menu()
-        
-        pygame.display.update()
-
-def get_font(size):
-    return pygame.font.SysFont('sans',size,True)
 
 def play(LEVEL,bird_selected):
     LEVEL = LEVEL
@@ -365,15 +291,6 @@ def play(LEVEL,bird_selected):
                 if isWin:
                     if next_level:
                         LEVEL += 1
-                        # SCREEN.blit(PLAY_BG_IMG,(0,0))
-                        # level_txt = GAME_FONT.render("Level "+str(LEVEL),True,'red')
-                        # level_txt_rect = level_txt.get_rect(center=(250,100))
-                        # SCREEN.blit(level_txt,level_txt_rect)
-                        # SCREEN.blit(your_score_txt,your_score_rect)
-                        # SCREEN.blit(GAME_OVER,GAME_OVER_RECT)
-                        # PLAY_BACK = Button(image=OPTION_CONTROL_BG,pos=(100,630),text_input='BACK',font=get_font(45),base_color='red',hovering_color='white')
-                        # PLAY_BACK.changeColor(PLAY_MOUSE_POS)
-                        # PLAY_BACK.update(SCREEN)
                         next_level = False
                         isWin = False
                         isStart = False
@@ -486,69 +403,7 @@ def play(LEVEL,bird_selected):
                 choose_bird = bird_list[bird_index]
                         
         pygame.display.update()
-        CLOCK.tick(60)           
-
-def options():
-    while True:
-        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
-        CLOCK.tick(60)
-        SCREEN.fill('#FAEAB1')
-        pygame.display.set_caption('Options')
-
-        OPTIONS_TEXT = get_font(30).render('Choose the character you like',True,'red')
-        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(250,100))
-        SCREEN.blit(OPTIONS_TEXT,OPTIONS_RECT)
-
-        OPTION1_RECT = SQUARE_BTN_BG.get_rect(center=(105,300))
-        OPTION2_RECT = SQUARE_BTN_BG.get_rect(center=(250,300))
-        OPTION3_RECT = SQUARE_BTN_BG.get_rect(center=(395,300))
-
-        SCREEN.blit(SQUARE_BTN_BG,OPTION1_RECT)
-        SCREEN.blit(SQUARE_BTN_BG,OPTION2_RECT)
-        SCREEN.blit(SQUARE_BTN_BG,OPTION3_RECT)
-        # bird images
-
-        YELLOW_BIRD_RECT = BIRD_MID_YELLOW.get_rect(center=(105,300))
-        BLUE_BIRD_RECT = BIRD_MID_BLUE.get_rect(center=(250,300))
-        RED_BIRD_RECT = BIRD_MID_RED.get_rect(center=(395,300))
-
-        SCREEN.blit(BIRD_MID_YELLOW,YELLOW_BIRD_RECT)
-        SCREEN.blit(BIRD_MID_BLUE,BLUE_BIRD_RECT)
-        SCREEN.blit(BIRD_MID_RED,RED_BIRD_RECT)
-
-        BTN1_OPTION = Button(image=OPTION_BTN_BG,pos=(105,400),text_input='Choose',font=get_font(20),base_color='white',hovering_color='red')
-        BTN2_OPTION = Button(image=OPTION_BTN_BG,pos=(250,400),text_input='Choose',font=get_font(20),base_color='white',hovering_color='red')
-        BTN3_OPTION = Button(image=OPTION_BTN_BG,pos=(395,400),text_input='Choose',font=get_font(20),base_color='white',hovering_color='red')
-
-        BTN_DEFAULT = Button(image=OPTION_BTN_BG,pos=(250,600),text_input="Choose Default",font=get_font(20),base_color='red',hovering_color='white')
-        BTN_RANDOM = Button(image=OPTION_BTN_BG,pos=(395,600),text_input='Choose Random',font=get_font(20),base_color='red',hovering_color='white')
-
-        for button in [BTN1_OPTION,BTN2_OPTION,BTN3_OPTION,BTN_DEFAULT,BTN_RANDOM]:
-            button.changeColor(OPTIONS_MOUSE_POS)
-            button.update(SCREEN)
-
-        OPTIONS_BACK = Button(image=OPTION_CONTROL_BG,pos=(105,600),text_input='BACK',font=get_font(45),base_color='red',hovering_color='white')
-        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-        OPTIONS_BACK.update(SCREEN)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu()
-                if BTN1_OPTION.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu(0)
-                if BTN2_OPTION.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu(1)
-                if BTN3_OPTION.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu(2)
-                if BTN_DEFAULT.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu()
-                if BTN_RANDOM.checkForInput(OPTIONS_MOUSE_POS):
-                    random_bird = random.randint(0,2)
-                    main_menu(random_bird)
-        pygame.display.update()
+        CLOCK.tick(60)  
 
 def main_menu(bird_selected = 0,level = LEVEL):
     menu_x_pos = 0
@@ -602,6 +457,3 @@ def main_menu(bird_selected = 0,level = LEVEL):
         pygame.display.update()
 
 main_menu()
-
-
-
